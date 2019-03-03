@@ -12,7 +12,8 @@ public class Demo {
     private JButton hostButton;
     private JButton connectButton;
     private JLabel warning;
-    static JFrame frame;
+
+    static private JFrame frame;
 
     public Demo() {
 
@@ -43,8 +44,10 @@ public class Demo {
                     new Server(name, pass, channel, inter, frame);
                     warning.setVisible(false);
                     frame.setVisible(false);
+                    frame.pack();
                 } else {
                     warning.setVisible(true);
+                    frame.pack();
                 }
             }
         });

@@ -168,7 +168,8 @@ public class MacAdHocConfig extends AdHocConfig {
 
     private static ScriptMeta runScript(String[] command) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(new File("../code/scripts"));
+        String absPath = new File("src/AdhocAPI/scripts").getAbsolutePath();
+        pb.directory(new File(absPath));
         Process p = pb.start();
         return new ScriptMeta(p.waitFor(), output(p.getInputStream()));
     }
