@@ -30,6 +30,7 @@ public class Demo {
                 //Create the client side
                 //Send info from textField1-4
                 //Create the new window and close the old one
+                //Change
             }
         });
     }
