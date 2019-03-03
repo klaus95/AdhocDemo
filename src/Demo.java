@@ -17,6 +17,10 @@ public class Demo {
     public Demo() {
 
         warning.setVisible(false);
+        textField1.setText("Klaus");
+        textField2.setText("1234");
+        textField3.setText("11");
+        textField4.setText("en0");
 
         hostButton.addMouseListener(new MouseAdapter() {
             @Override
