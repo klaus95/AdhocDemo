@@ -8,7 +8,7 @@ public class UnknownOSException extends Exception {
     }
 
     public String toString() {
-        String retValue = "os name found is:" + os;
+        String retValue = "OS name found is:" + os;
         retValue += "\r\n";
         retValue += "Expected to contain \"windows\", \"linux\", or \"mac os\"";
         return retValue;

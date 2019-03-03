@@ -20,6 +20,6 @@ if let iface = CWWiFiClient.shared().interface(withName: interface) {
         exit(1)
     }
 } else {
-    print("Error: interface does not exists  (error=2,)")
+    print("Error: Interface does not exists  (error=2,)")
     exit(1)
 }

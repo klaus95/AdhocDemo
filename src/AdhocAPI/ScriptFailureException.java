@@ -12,7 +12,7 @@ public class ScriptFailureException extends Exception {
     }
 
     public String toString() {
-        return " Script filename: " + meta.name + " " + meta.output;
+        return " Filename: " + meta.name + " " + meta.output;
     }
 
 }

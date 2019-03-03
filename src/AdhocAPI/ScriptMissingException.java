@@ -12,7 +12,7 @@ public class ScriptMissingException extends Exception {
     }
 
     public String toString() {
-        return " Script filename: " + name;
+        return " Filename: " + name + " Error: File is not found!";
     }
 
 }

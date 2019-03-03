@@ -5,12 +5,11 @@ public class ScriptMeta {
 	int errorCode;
 	String output;
 
-	ScriptMeta (int errorCode, String output) {
+	public ScriptMeta (int errorCode, String output) {
 		this.errorCode = errorCode;
 		this.output = output;
 		this.name = "";
 	}
-	ScriptMeta () {}
 	public void setName(String name) { this.name = name;}
 
 	public int getErrorCode() { return errorCode; }

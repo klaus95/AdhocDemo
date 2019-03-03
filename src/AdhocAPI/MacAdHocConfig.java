@@ -5,22 +5,20 @@ import java.util.logging.Level;
 
 public class MacAdHocConfig extends AdHocConfig {
     @Override
-    public String[] getInterfaces() throws ScriptFailureException {
+    public String[] getInterfaces() throws ScriptFailureException, ScriptMissingException {
         String output;
 
         try {
 
           String[] temp = {"./all_interfaces.swift"};
           ScriptMeta metadata = runScript(temp);
-          metadata.setName(temp[0]);
+          metadata.setName(temp[0].substring(2));
 
           output = metadata.getOutput();
 
           if (metadata.getErrorCode() != 0) {
               throw sendLOG(metadata);
           }
-      } catch (IOException e) {
-          throw catchSFE(e);
       } catch (InterruptedException e) {
           throw catchSFE(e);
       }
@@ -28,22 +26,20 @@ public class MacAdHocConfig extends AdHocConfig {
     }
 
     @Override
-    public String[] getConnectedInterfaces() throws ScriptFailureException {
+    public String[] getConnectedInterfaces() throws ScriptFailureException, ScriptMissingException {
         String output;
 
         try {
 
             String[] temp = {"./current_interface.swift"};
             ScriptMeta metadata = runScript(temp);
-            metadata.setName(temp[0]);
+            metadata.setName(temp[0].substring(2));
 
             output = metadata.getOutput();
 
             if (metadata.getErrorCode() != 0) {
                 throw sendLOG(metadata);
             }
-        } catch (IOException e) {
-            throw catchSFE(e);
         } catch (InterruptedException e) {
             throw catchSFE(e);
         }
@@ -53,29 +49,26 @@ public class MacAdHocConfig extends AdHocConfig {
     }
 
     @Override
-    public int[] getSupportedChannels(String wirelessInterface) throws ScriptFailureException, MissingArgumentsException {
+    public int[] getSupportedChannels(String wirelessInterface) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException {
         String output;
 
         setNetworkInterface(wirelessInterface);
 
         if (getNetworkInterface() == null) {
-            throw new MissingArgumentsException("Interface.");
+            throw new MissingArgumentsException("[Network Interface]");
         }
 
         try {
 
             String[] temp = {"./all_channels.swift", wirelessInterface};
             ScriptMeta metadata = runScript(temp);
-            metadata.setName(temp[0]);
+            metadata.setName(temp[0].substring(2));
 
             output = metadata.getOutput();
-            System.out.println(output);
 
             if (metadata.getErrorCode() != 0) {
                 throw sendLOG(metadata);
             }
-        } catch (IOException e) {
-            throw catchSFE(e);
         } catch (InterruptedException e) {
             throw catchSFE(e);
         }
@@ -92,19 +85,17 @@ public class MacAdHocConfig extends AdHocConfig {
     }
 
     @Override
-    public int connectToNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException {
+    public int connectToNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException {
         checkMissingArgs(networkName, password, interfaceName, channel);
 
         try {
             String[] temp = {"./connect_to_network.swift", interfaceName, networkName, password};
             ScriptMeta metadata = runScript(temp);
-            metadata.setName(temp[0]);
+            metadata.setName(temp[0].substring(2));
 
             if (metadata.getErrorCode() != 0) {
                 throw sendLOG(metadata);
             }
-        } catch (IOException e) {
-            throw catchSFE(e);
         } catch (InterruptedException e) {
             throw catchSFE(e);
         }
@@ -112,23 +103,21 @@ public class MacAdHocConfig extends AdHocConfig {
     }
 
     @Override
-    public int connectToNetwork() throws ScriptFailureException, MissingArgumentsException {
+    public int connectToNetwork() throws ScriptFailureException, MissingArgumentsException, ScriptMissingException {
         connectToNetwork(getSSID(), getPassword(), getNetworkInterface(), getChannel());
         return 0;
     }
 
     @Override
-    public int disconnectFromNetwork() throws ScriptFailureException {
+    public int disconnectFromNetwork() throws ScriptFailureException, ScriptMissingException {
         try {
             String[] temp = {"./disconnect_from_network.swift"};
             ScriptMeta metadata = runScript(temp);
-            metadata.setName(temp[0]);
+            metadata.setName(temp[0].substring(2));
 
             if (metadata.getErrorCode() != 0) {
                 throw sendLOG(metadata);
             }
-        } catch (IOException e) {
-            throw catchSFE(e);
         } catch (InterruptedException e) {
             throw catchSFE(e);
         }
@@ -136,27 +125,25 @@ public class MacAdHocConfig extends AdHocConfig {
     }
 
     @Override
-    public int createNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException {
+    public int createNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException {
         checkMissingArgs(networkName, password, interfaceName, channel);
 
         try {
             String[] temp = {"./create_network.swift",interfaceName , networkName, password, "" + channel};
             ScriptMeta metadata = runScript(temp);
-            metadata.setName(temp[0]);
+            metadata.setName(temp[0].substring(2));
 
             if (metadata.getErrorCode() != 0 || metadata.getOutput().contains("Error")) {
                 throw sendLOG(metadata);
             }
-        } catch (IOException e) {
-            throw catchSFE(e);
-        } catch (InterruptedException e) {
+        }catch (InterruptedException e) {
             throw catchSFE(e);
         }
         return 0;
     }
 
     @Override
-    public int createNetwork() throws ScriptFailureException, MissingArgumentsException {
+    public int createNetwork() throws ScriptFailureException, MissingArgumentsException, ScriptMissingException {
         createNetwork(getSSID(), getPassword(), getNetworkInterface(), getChannel());
         return 0;
     }
@@ -166,12 +153,18 @@ public class MacAdHocConfig extends AdHocConfig {
         return true;
     }
 
-    private static ScriptMeta runScript(String[] command) throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder(command);
-        String absPath = new File("src/AdhocAPI/scripts").getAbsolutePath();
-        pb.directory(new File(absPath));
-        Process p = pb.start();
-        return new ScriptMeta(p.waitFor(), output(p.getInputStream()));
+    private static ScriptMeta runScript(String[] command) throws InterruptedException, ScriptMissingException {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(command);
+            String absPath = new File("src/AdhocAPI/scripts").getAbsolutePath();
+            pb.directory(new File(absPath));
+            Process p = pb.start();
+            return new ScriptMeta(p.waitFor(), output(p.getInputStream()));
+        } catch (IOException ex) {
+            ScriptMissingException sme = new ScriptMissingException(command[0].substring(2));
+            ErrorLogging.LOGS.log(Level.SEVERE, sme.toString(), sme);
+            throw sme;
+        }
     }
 
     private void checkMissingArgs(String networkName, String password, String interfaceName, int channel) throws MissingArgumentsException {
