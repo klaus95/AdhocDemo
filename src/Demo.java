@@ -11,15 +11,41 @@ public class Demo {
     private JTextField textField4;
     private JButton hostButton;
     private JButton connectButton;
+    private JLabel warning;
+    static JFrame frame;
 
     public Demo() {
+
+        warning.setVisible(false);
+
         hostButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 //Create the server side
-                //Send info from textField1-4
-                //Create the new window and close the old one
+
+                boolean host = true;
+
+                String name = textField1.getText();
+                if (name.isEmpty()) host = false;
+                String pass = textField2.getText();
+                if (pass.isEmpty()) host = false;
+                int channel = -1;
+                try {
+                    channel = Integer.parseInt(textField3.getText());
+                } catch (Exception ex) {
+                    host = false;
+                }
+                String inter = textField4.getText();
+                if (inter.isEmpty()) host = false;
+
+                if (host) {
+                    new Server(name, pass, channel, inter, frame);
+                    warning.setVisible(false);
+                    frame.setVisible(false);
+                } else {
+                    warning.setVisible(true);
+                }
             }
         });
 
@@ -30,16 +56,18 @@ public class Demo {
                 //Create the client side
                 //Send info from textField1-4
                 //Create the new window and close the old one
-                //Change done
+
+                //Micheal work here!!
             }
         });
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Demo");
+        frame = new JFrame("Demo");
         frame.setContentPane(new Demo().panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
