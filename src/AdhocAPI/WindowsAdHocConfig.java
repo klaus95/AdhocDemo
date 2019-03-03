@@ -11,24 +11,72 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.Random;
 
 public class WindowsAdHocConfig extends AdHocConfig {
 
+    public static void setDynamicIP(String interfaceName) {
+        // reset the user's interface to dyanmic ip assignment after disconnecting from a network
+    }
+
+    public static void setStaticIP (String interfaceName) throws ScriptFailureException {
+        // IP address have four sets of values between 1 and 254, 255 is broadcast, and 0 is not usable
+        // in our case the first two sets are known
+        //StringBuilder new_ip = new StringBuilder("169.254.1");
+        //Random rand =  new Random();
+       // int fourth = rand.nextInt(255);
+       // new_ip.append("." + fourth);
+       // String ip = new_ip.toString();
+        // now run script to set
+        String ip = "169.254.1.1";
+        String subnet_mask = "255.255.255.0";
+        String default_gateway = "192.168.1.1";
+
+        try {
+            final String scriptName = "WINDOWS_SET_STATIC_IP.cmd";
+            String[] script_name = {scriptName, interfaceName, ip, subnet_mask, default_gateway};
+            ScriptMeta metadata = runScript(script_name);
+            metadata.setName(scriptName);
+            if (metadata.getErrorCode() != 0) {
+                throw sendLOG(metadata);
+            }
+        } catch (Exception e) {
+            throw catchSFE(e);
+        }
+
+    }
+
     public boolean fileExists(String fileName) {
-        String path =Paths.get(".").toAbsolutePath().normalize().toString() + "\\code\\scripts\\Windows\\ + fileName";
+        String path =Paths.get(".").toAbsolutePath().normalize().toString() + "\\code\\scripts\\Windows\\" + fileName;
         File temp = new File(path);
         return temp.exists();
     }
 
+    public String getMissingArgs() {
+        StringBuilder missingArgs = new StringBuilder();
+
+        if (this.getNetworkInterface() == null) { missingArgs.append("[Network Interface]");}
+        if (this.getSSID() == null) { missingArgs.append("[SSID]");}
+        if (this.getPassword() == null){ missingArgs.append("[Password]");}
+        if (this.getChannel() == 0){ missingArgs.append("[Channel]");}
+        return missingArgs.toString();
+    }
+
    @Override
-   public String[] getInterfaces() throws ScriptMissingException, ScriptFailureException, DeniedPermissionException {
-       try {
-           String scriptName = "WINDOWS_INTERFACE_SHOW_INTERFACE.cmd";
-           if (!fileExists(scriptName)) {
-               throw new ScriptMissingException(scriptName);
-               // for testing
-               //System.out.println("Missing the neccessary files in getInterfaces()");
-           }
+   public String[] getInterfaces() throws ScriptFailureException, MissingArgumentsException, ScriptMissingException, DeniedPermissionException {
+       final String scriptName = "WINDOWS_INTERFACE_SHOW_INTERFACE.cmd";
+       if (!fileExists(scriptName)) {
+           throw new ScriptMissingException(scriptName);
+       }
+       // make sure to finish the denied permission exception in each method
+       if (1 < 0) {
+           throw new DeniedPermissionException("");
+       }
+        try {
+            //**************Check that all the necessary arguments are defined***********
+            String missingArgs = getMissingArgs();
+            if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
+            //****************************************************************************
            String[] script_with_args = {scriptName};
            ScriptMeta metadata = runScript(script_with_args);
            metadata.setName(scriptName);
@@ -63,18 +111,25 @@ public class WindowsAdHocConfig extends AdHocConfig {
            output.close();
            return interfaces.toArray(new String[interfaces.size()]);
 
-       } catch (Exception e) {
+       } catch (IOException e) {
            throw catchSFE(e);
 
-       }
+       } catch (InterruptedException e) {
+            throw catchSFE(e);
+        }
    }
 
     @Override
     public String[] getConnectedInterfaces() throws ScriptFailureException {
         try {
-            String[] script_with_args = {"WINDOWS_INTERFACE_SHOW_INTERFACE.cmd"};
+            //**************Check that all the necessary arguments are defined***********
+            String missingArgs = getMissingArgs();
+            if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
+            //****************************************************************************
+            final String scriptName = "WINDOWS_INTERFACE_SHOW_INTERFACE.cmd";
+            String[] script_with_args = {scriptName};
             ScriptMeta metadata = runScript(script_with_args);
-            metadata.setName("WINDOWS_INTERFACE_SHOW_INTERFACE.cmd");
+            metadata.setName(scriptName);
             Scanner output = new Scanner(metadata.getOutput());
             /* The pattern is:
                Admin State --- State --- Type --- Interface Name
@@ -119,17 +174,7 @@ public class WindowsAdHocConfig extends AdHocConfig {
 
     @Override
     public int connectToNetwork() throws ScriptFailureException {
-        try {
-            createProfile();
-            String[] script_with_args = {"WINDOWS_CONNECT_TO_NETWORK.cmd", this.getSSID(), this.getNetworkInterface()};
-            ScriptMeta metadata = runScript(script_with_args);
-            metadata.setName("WINDOWS_CONNECT_TO_NETWORK.cmd");
-            if (metadata.getErrorCode() != 0) {
-                throw sendLOG(metadata);
-            }
-        } catch (Exception e) {
-            throw catchSFE(e);
-        }
+        connectToNetwork(this.getSSID(), this.getPassword(), this.getNetworkInterface(), this.getChannel());
         return 0;
     }
 
@@ -142,13 +187,20 @@ public class WindowsAdHocConfig extends AdHocConfig {
             this.setNetworkInterface(interfaceName);
             this.setChannel(channel);
             //***************************************************************************
-            createProfile();
-            String[] script_with_args = {"WINDOWS_CONNECT_TO_NETWORK.cmd", networkName, interfaceName};
+            //**************Check that all the necessary arguments are defined***********
+            String missingArgs = getMissingArgs();
+            if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
+            //***************************************************************************
+            final String scriptName = "WINDOWS_CONNECT_TO_NETWORK.cmd";
+            String[] script_with_args = {scriptName, networkName, interfaceName};
             ScriptMeta metadata = runScript(script_with_args);
-            metadata.setName("WINDOWS_CONNECT_TO_NETWORK.cmd");
+            metadata.setName(scriptName);
             if (metadata.getErrorCode() != 0) {
                 throw sendLOG(metadata);
             }
+            // now set a static ip address 169.254.XXX.XXX
+            setStaticIP(interfaceName);
+            //**********************************************
         } catch (Exception e) {
             throw catchSFE(e);
         }
@@ -157,6 +209,10 @@ public class WindowsAdHocConfig extends AdHocConfig {
 
     public int createProfile() throws ScriptFailureException {
         try {
+            //**************Check that all the necessary arguments are defined***********
+            String missingArgs = getMissingArgs();
+            if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
+            //****************************************************************************
             writeXML(this.getSSID());
             String[] script_with_args = {"WINDOWS_CREATE_PROFILE.cmd", this.getSSID() + ".xml", this.getNetworkInterface()};
             ScriptMeta metadata = runScript(script_with_args);
@@ -255,7 +311,7 @@ public class WindowsAdHocConfig extends AdHocConfig {
     */
 
     @Override
-    public int createNetwork() throws ScriptFailureException {
+    public int createNetwork() throws ScriptFailureException, MissingArgumentsException {
         /*try {
              Possible password restrictions here
             if (password_key.length() < 8) {
@@ -273,12 +329,12 @@ public class WindowsAdHocConfig extends AdHocConfig {
             throw catchSFE(e);
         }*/
 
-            connectToNetwork();
+            createNetwork(this.getSSID(), this.getPassword(), this.getNetworkInterface(), this.getChannel());
         return 0;
     }
 
     @Override
-    public int createNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException {
+    public int createNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException {
        /* try {
              Possible password restrictions here
             if (password_key.length() < 8) {
@@ -304,6 +360,25 @@ public class WindowsAdHocConfig extends AdHocConfig {
             throw catchSFE(e);
         }
         */
+        //*************Update the SystemConfiguration here**************************
+        this.setSSID(networkName);
+        this.setPassword(password);
+        this.setNetworkInterface(interfaceName);
+        this.setChannel(channel);
+        //***************************************************************************
+        //**************Check that all the necessary arguments are defined***********
+        String missingArgs = getMissingArgs();
+        if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
+        //***************************************************************************
+        createProfile();
+        // new networks must have a profile
+        // this method call is all that makes createNetwork different from connectToNetwork
+        // if you create a profile for a network that already exists, then
+        // instead of connecting, then it will over-write the old profile info
+        // and you will end up with your own local ad-hoc network with an identical SSID
+        // instead of connecting to the network you intended to.
+        // ONLY USE CREATE_PROFILE for NEW AD-HOC Networks, hence why it's ONLY in
+        // the createNetwork function
         connectToNetwork(networkName, password, interfaceName, channel);
         return 0;
     }
@@ -313,10 +388,11 @@ public class WindowsAdHocConfig extends AdHocConfig {
         try {
             // old way was to host networks, but thats in infrastructure mode
             //String[] script_name = {"WINDOWS_STOP_HOST_ADHOC.cmd"};
-            String[] script_name = {"WINDOWS_DELETE_PROFILE.cmd", this.getNetworkInterface(), this.getSSID()};
+            final String scriptName = "WINDOWS_DELETE_PROFILE.cmd";
+            String[] script_name = {scriptName, this.getNetworkInterface(), this.getSSID()};
             ScriptMeta metadata = runScript(script_name);
             //metadata.setName("WINDOWS_STOP_HOST_ADHOC.cmd");
-            metadata.setName("WINDOWS_DELETE_PROFILE.cmd");
+            metadata.setName(scriptName);
             /*//*********Update the SystemConfiguration here***********************************
             this.setSSID("");
             this.setPassword("");
