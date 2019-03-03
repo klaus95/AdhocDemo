@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import AdhocAPI.*;
 
 public class Demo {
     private JPanel panel1;
@@ -31,7 +30,7 @@ public class Demo {
                 if (name.isEmpty()) host = false;
                 String pass = textField2.getText();
                 if (pass.isEmpty()) host = false;
-                int channel = -1;
+                int channel = 11;
                 try {
                     channel = Integer.parseInt(textField3.getText());
                 } catch (Exception ex) {
