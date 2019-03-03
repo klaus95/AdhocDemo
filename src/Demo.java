@@ -54,6 +54,7 @@ public class Demo {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 //Create the client side
+                //Create a new GUI form like the Server class
                 //Send info from textField1-4
                 //Create the new window and close the old one
 
