@@ -2,6 +2,8 @@ package AdhocAPI;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -405,6 +407,16 @@ public class WindowsAdHocConfig extends AdHocConfig {
             throw catchSFE(e);
         }
         return 0;
+    }
+
+    @Override
+    public Socket clientSocket(String ip, int port) throws IOException {
+        return new Socket(ip, port);
+    }
+
+    @Override
+    public ServerSocket serverSocket(int port) throws IOException {
+        return new ServerSocket(port);
     }
 
     @Override

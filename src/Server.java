@@ -27,7 +27,7 @@ public class Server {
         frame.setVisible(true);
 
         CreateNetwork cn = new CreateNetwork(name, password, channel, interfaceName, Performance, frame);
-        cn.start();
+        //cn.start(); ------ HERE
 
         disconnectButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -58,7 +58,7 @@ public class Server {
                 oldFrame.setVisible(true);
 
                 DiscconectNetwork dn = new DiscconectNetwork();
-                //dn.start();
+                //dn.start(); ------ HERE
             }
         });
     }

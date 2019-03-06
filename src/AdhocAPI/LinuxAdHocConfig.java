@@ -1,6 +1,8 @@
 package AdhocAPI;
 
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -221,7 +223,7 @@ public class LinuxAdHocConfig extends AdHocConfig {
 
             for (String s : res) {
                 Matcher matcher = pattern.matcher(s);
-                if (((Matcher) matcher).find()) {
+                if (matcher.find()) {
                     count++;
                 }
             }
@@ -230,7 +232,7 @@ public class LinuxAdHocConfig extends AdHocConfig {
             count = 0;
             for (String s : res) {
                 Matcher matcher = pattern.matcher(s);
-                if (((Matcher) matcher).find()) {
+                if (matcher.find()) {
                     String[] temp = s.split(" ");
                     //System.out.printf("DEBUG: %s\n", Arrays.toString(temp));
                     String ezGigs = temp[temp.length - 2];
@@ -300,6 +302,16 @@ public class LinuxAdHocConfig extends AdHocConfig {
             throw catchSFE(e);
         }
 
+    }
+
+    @Override
+    public Socket clientSocket(String ip, int port) throws IOException {
+        return new Socket(ip, port);
+    }
+
+    @Override
+    public ServerSocket serverSocket(int port) throws IOException {
+        return new ServerSocket(port);
     }
 
     @Override

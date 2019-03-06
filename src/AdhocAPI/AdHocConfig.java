@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.logging.Level;
 
 public abstract class AdHocConfig {
@@ -37,6 +39,10 @@ public abstract class AdHocConfig {
     public abstract int createNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException, DeniedPermissionException;
 	
 	public abstract int disconnectFromNetwork() throws ScriptFailureException, MissingArgumentsException, ScriptMissingException, DeniedPermissionException;
+
+	public abstract Socket clientSocket(String ip, int port) throws IOException;
+
+	public abstract ServerSocket serverSocket(int port) throws IOException;
 
     public abstract boolean isAdHocCapable();
 

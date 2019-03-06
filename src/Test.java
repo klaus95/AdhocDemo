@@ -6,9 +6,11 @@ public class Test {
         try {
 
             AdHocConfig network = FactoryAdHocConfig.init();
-            //network.disconnectFromNetwork();
+            network.createNetwork("Connect", "", "en0", 11);
+            Thread.sleep(40 * 1000);
+            MacAdHocConfig.pingAll();
+            network.disconnectFromNetwork();
             network.connectToNetwork("PanthAIR", "", "en0", 11);
-            //network.createNetwork("Connect", "hello123", "en0", 11);
 
         } catch(Exception e) {
             System.out.println("Shit happened");

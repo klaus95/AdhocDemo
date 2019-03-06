@@ -33,7 +33,7 @@ public class CreateNetwork extends Thread {
             network.setSSID(WIFIname);
 
             try {
-                //network.createNetwork();
+                network.createNetwork();
                 performance.setText(" WIFI \"" + WIFIname + "\" created!");
                 frame.pack();
             } catch (Exception e) {

@@ -1,6 +1,11 @@
 package AdhocAPI;
 
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.LinkedList;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 
 public class MacAdHocConfig extends AdHocConfig {
@@ -125,6 +130,16 @@ public class MacAdHocConfig extends AdHocConfig {
     }
 
     @Override
+    public Socket clientSocket(String ip, int port) throws IOException {
+        return new Socket(ip, port);
+    }
+
+    @Override
+    public ServerSocket serverSocket(int port) throws IOException {
+        return new ServerSocket(port);
+    }
+
+    @Override
     public int createNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException {
         checkMissingArgs(networkName, password, interfaceName, channel);
 
@@ -151,6 +166,15 @@ public class MacAdHocConfig extends AdHocConfig {
     @Override
     public boolean isAdHocCapable() {
         return true;
+    }
+
+    public static void pingAll() {
+        String[] command = {"ping", "-t", "5",""};
+
+        for (int i = 1; i < 10; i++) {
+            command[3] = "169.254.1." + i;
+            new PingAll(command).start();
+        }
     }
 
     private static ScriptMeta runScript(String[] command) throws InterruptedException, ScriptMissingException {
