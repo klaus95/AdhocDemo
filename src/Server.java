@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class Server {
     private JPanel panel1;
@@ -28,7 +29,8 @@ public class Server {
 
         //new CreateNetwork(name, password, channel, interfaceName, Performance, frame).start(); ------ HERE
 
-        new TCPServer(23462).start();
+        Semaphore lock = new Semaphore(1);
+        new TCPServer(23462, list1, lock).start();
 
         disconnectButton.addMouseListener(new MouseAdapter() {
             @Override
