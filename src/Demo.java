@@ -26,25 +26,9 @@ public class Demo {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                //Create the server side
 
-                boolean host = true;
-
-                String name = textField1.getText();
-                if (name.isEmpty()) host = false;
-                String pass = textField2.getText();
-                if (pass.isEmpty()) host = false;
-                int channel = 11;
-                try {
-                    channel = Integer.parseInt(textField3.getText());
-                } catch (Exception ex) {
-                    host = false;
-                }
-                String inter = textField4.getText();
-                if (inter.isEmpty()) host = false;
-
-                if (host) {
-                    new Server(name, pass, channel, inter, frame);
+                if (areArgumentsValid()) {
+                    new Server(textField1.getText(), textField2.getText(), Integer.parseInt(textField3.getText()), textField4.getText(), frame);
                     warning.setVisible(false);
                     frame.setVisible(false);
                     frame.pack();
@@ -59,14 +43,28 @@ public class Demo {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                //Create the client side
-                //Create a new GUI form like the Server class
-                //Send info from textField1-4
-                //Create the new window and close the old one
 
-                //Micheal work here!!
+                if (areArgumentsValid()) {
+                    new Client(textField1.getText(), textField2.getText(), Integer.parseInt(textField3.getText()), textField4.getText(), frame);
+                    warning.setVisible(false);
+                    frame.setVisible(false);
+                    frame.pack();
+                } else {
+                    warning.setVisible(true);
+                    frame.pack();
+                }
             }
         });
+    }
+
+    private boolean areArgumentsValid() {
+        if (textField1.getText().isEmpty()) return false;
+        try {
+            Integer.parseInt(textField3.getText());
+        } catch (Exception ex) {
+            return false;
+        }
+        return !textField4.getText().isEmpty();
     }
 
     public static void main(String[] args) {

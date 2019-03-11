@@ -27,7 +27,7 @@ public class Server {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        //new CreateNetwork(name, password, channel, interfaceName, Performance, frame).start(); ------ HERE
+        new CreateNetwork(name, password, channel, interfaceName, Performance, frame).start();
 
         Semaphore lock = new Semaphore(1);
         new TCPServer(23462, list1, lock).start();
@@ -60,7 +60,7 @@ public class Server {
                 super.windowClosing(e);
                 oldFrame.setVisible(true);
 
-                //new DiscconectNetwork().start(); ------ HERE
+                new DiscconectNetwork().start();
             }
         });
     }
