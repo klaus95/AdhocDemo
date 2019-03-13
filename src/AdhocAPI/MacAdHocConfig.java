@@ -168,15 +168,6 @@ public class MacAdHocConfig extends AdHocConfig {
         return true;
     }
 
-    public static void pingAll() {
-        String[] command = {"ping", "-t", "5",""};
-
-        for (int i = 1; i < 10; i++) {
-            command[3] = "169.254.1." + i;
-            new PingAll(command).start();
-        }
-    }
-
     private static ScriptMeta runScript(String[] command) throws InterruptedException, ScriptMissingException {
         try {
             ProcessBuilder pb = new ProcessBuilder(command);

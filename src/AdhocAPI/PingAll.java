@@ -1,12 +1,15 @@
 package AdhocAPI;
 
-public class PingAll extends Thread {
-    //command variable for Windows = {"cmd", "/c", "ping", ip}
-    //ip variable for Windows = "169.254.1." + i
-    private String[] command;
+import java.util.concurrent.Semaphore;
 
-    public PingAll(String[] command) {
+public class PingAll extends Thread {
+    //----------------------------------- DO NOT USE ------------------------------------
+    private String[] command;
+    private Semaphore s;
+
+    public PingAll(String[] command, Semaphore s) {
         this.command = command;
+        this.s = s;
     }
 
     @Override
@@ -16,7 +19,13 @@ public class PingAll extends Thread {
             Process p = pb.start();
             String output = AdHocConfig.output(p.getInputStream());
             if (output.contains("time=")) {
-                //successful ping
+                try {
+                    s.acquire();
+                } catch (Exception e) {
+                    System.out.println("Failed to catch the semaphore in PINGALL");
+                }
+                //do smth
+                s.release();
             }
         } catch (Exception e) {
             e.printStackTrace();

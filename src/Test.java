@@ -8,7 +8,6 @@ public class Test {
             AdHocConfig network = FactoryAdHocConfig.init();
             network.createNetwork("Connect", "", "en0", 11);
             Thread.sleep(40 * 1000);
-            MacAdHocConfig.pingAll();
             network.disconnectFromNetwork();
             network.connectToNetwork("PanthAIR", "", "en0", 11);
 

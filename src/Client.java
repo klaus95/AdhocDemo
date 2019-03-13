@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.LinkedList;
 
 public class Client {
 
@@ -13,6 +14,8 @@ public class Client {
     private JLabel waitLabel;
     private JLabel warning;
     private JLabel idLabel;
+
+    static LinkedList<String> ips = new LinkedList<>();
 
     public Client (String name, String password, int channel, String interfaceName, JFrame oldFrame) {
 
@@ -26,7 +29,7 @@ public class Client {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        //new ConnectNetwork(name, password, channel, interfaceName, waitLabel, frame).start();
+        new ConnectNetwork(name, password, channel, interfaceName, waitLabel, frame).start();
 
         markAttendenceButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -44,17 +47,13 @@ public class Client {
                     markAttendenceButton.setVisible(false);
                     idLabel.setVisible(false);
 
-                    ImageIcon loading = new ImageIcon(new File("").getAbsolutePath() + "/src/ajax-loader.gif");
                     waitLabel.setHorizontalTextPosition(JLabel.CENTER);
                     waitLabel.setVerticalTextPosition(JLabel.BOTTOM);
-                    waitLabel.setText("Please Wait! Connecting with server...");
-                    waitLabel.setIcon(loading);
+                    waitLabel.setText("Please Wait! Discovering devices in the network...");
+                    waitLabel.setIcon(new ImageIcon(new File("").getAbsolutePath() + "/src/ajax-loader.gif"));
                     frame.pack();
 
-                    //Ping all ips
-                    //Find the server
-                    //Send username to server
-                    //Close connection
+                    new Ping(waitLabel).start();
 
                 }
 
@@ -67,7 +66,7 @@ public class Client {
                 super.windowClosing(e);
                 oldFrame.setVisible(true);
 
-                //new DiscconectNetwork().start();
+                new DiscconectNetwork().start();
             }
         });
 
