@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.io.File;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +11,11 @@ import java.util.concurrent.Future;
 public class Ping extends Thread {
 
     private JLabel text;
+    private String name;
 
-    Ping(JLabel text) {
+    Ping(JLabel text, String name) {
         this.text = text;
+        this.name = name;
     }
 
     @Override
@@ -45,13 +47,31 @@ public class Ping extends Thread {
 
         if (!ips.isEmpty()) {
             text.setText("Please Wait! Connecting to server...");
+            for (String ip : ips) {
+                Socket client;
+                try {
+                    client = new Socket(ip, 23462);
 
-            //Find the server
-            //Send username to server
-            //Close connection
+                    PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            text.setText("Attendance marked successfully!");
-            text.setIcon(new ImageIcon(new File("").getAbsolutePath() + "/src/tick.png"));
+                    out.println(name);
+                    String inputLine = in.readLine();
+
+                    if (inputLine.equals("Entry added successfully!")) {
+                        text.setText("Attendance marked successfully!");
+                        text.setIcon(new ImageIcon(new File("").getAbsolutePath() + "/src/tick.png"));
+                        client.close();
+                    } else {
+                        text.setText("No devices found!");
+                        text.setIcon(new ImageIcon(new File("").getAbsolutePath() + "/src/x.png"));
+                        client.close();
+                    }
+
+                } catch (IOException e) {
+                    System.out.println("No server in " + ip);
+                }
+            }
 
         } else {
             text.setText("No devices found!");

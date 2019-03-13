@@ -53,7 +53,7 @@ public class Client {
                     waitLabel.setIcon(new ImageIcon(new File("").getAbsolutePath() + "/src/ajax-loader.gif"));
                     frame.pack();
 
-                    new Ping(waitLabel).start();
+                    new Ping(waitLabel, name).start();
 
                 }
 
