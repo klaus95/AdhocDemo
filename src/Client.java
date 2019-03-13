@@ -3,6 +3,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 public class Client {
 
@@ -11,6 +12,7 @@ public class Client {
     private JButton markAttendenceButton;
     private JLabel waitLabel;
     private JLabel warning;
+    private JLabel idLabel;
 
     public Client (String name, String password, int channel, String interfaceName, JFrame oldFrame) {
 
@@ -24,7 +26,7 @@ public class Client {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        new ConnectNetwork(name, password, channel, interfaceName, waitLabel, frame).start();
+        //new ConnectNetwork(name, password, channel, interfaceName, waitLabel, frame).start();
 
         markAttendenceButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -38,8 +40,17 @@ public class Client {
                     frame.pack();
                 } else {
                     warning.setVisible(false);
+                    textField1.setVisible(false);
+                    markAttendenceButton.setVisible(false);
+                    idLabel.setVisible(false);
 
-                    //Display loading icon
+                    ImageIcon loading = new ImageIcon(new File("").getAbsolutePath() + "/src/ajax-loader.gif");
+                    waitLabel.setHorizontalTextPosition(JLabel.CENTER);
+                    waitLabel.setVerticalTextPosition(JLabel.BOTTOM);
+                    waitLabel.setText("Please Wait! Connecting with server...");
+                    waitLabel.setIcon(loading);
+                    frame.pack();
+
                     //Ping all ips
                     //Find the server
                     //Send username to server
@@ -56,7 +67,7 @@ public class Client {
                 super.windowClosing(e);
                 oldFrame.setVisible(true);
 
-                new DiscconectNetwork().start();
+                //new DiscconectNetwork().start();
             }
         });
 
