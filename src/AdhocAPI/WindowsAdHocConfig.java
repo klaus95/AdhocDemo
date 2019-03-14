@@ -254,7 +254,7 @@ public class WindowsAdHocConfig extends AdHocConfig {
         xml_file.append("</MSM>\n");
         xml_file.append("</WLANProfile>\n");
         String filename = SSID + ".xml";
-        String dir =Paths.get(".").toAbsolutePath().normalize().toString() + "\\code\\scripts\\Windows\\";
+        String dir =Paths.get(".").toAbsolutePath().normalize().toString() + "\\src\\AdhocAPI\\scripts\\Windows\\";
         Files.write(Paths.get(dir + filename), xml_file.toString().getBytes());
         // creates new xml file each time a new profile is added
     }
@@ -438,7 +438,7 @@ public class WindowsAdHocConfig extends AdHocConfig {
         }
         ProcessBuilder pb = new ProcessBuilder(commands_with_arguments);
         //ProcessBuilder pb = new ProcessBuilder("cmd", "/c", command[0]);
-        pb.directory(new File("code/scripts/Windows"));
+        pb.directory(new File("src/AdhocAPI/scripts/Windows"));
         Process p = pb.start();
         return new ScriptMeta(p.waitFor(), output(p.getInputStream()));
     }
