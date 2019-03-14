@@ -1,26 +1,41 @@
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import AdhocAPI.*;
 
 public class Demo {
     private JPanel panel1;
     private JTextField textField1;
     private JTextField textField2;
-    private JTextField textField3;
-    private JTextField textField4;
     private JButton hostButton;
     private JButton connectButton;
     private JLabel warning;
+    private JComboBox comboBox1;
+    private JComboBox comboBox2;
 
     static private JFrame frame;
 
     public Demo() {
 
         warning.setVisible(false);
+
         textField1.setText("Klaus");
         textField2.setText("1234");
-        textField3.setText("11");
-        textField4.setText("en0");
+
+        try {
+            AdHocConfig network = FactoryAdHocConfig.init();
+            String[] interfaces = network.getInterfaces();
+            for (String inter : interfaces) {
+                comboBox2.addItem(inter);
+            }
+            int[] channels = network.getSupportedChannels((String) comboBox2.getSelectedItem());
+            for (int channel : channels) {
+                comboBox1.addItem(channel);
+            }
+            comboBox1.setSelectedItem(11);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         hostButton.addMouseListener(new MouseAdapter() {
             @Override
@@ -28,7 +43,7 @@ public class Demo {
                 super.mouseClicked(e);
 
                 if (areArgumentsValid()) {
-                    new Server(textField1.getText(), textField2.getText(), Integer.parseInt(textField3.getText()), textField4.getText(), frame);
+                    new Server(textField1.getText(), textField2.getText(), (int) comboBox1.getSelectedItem(), (String) comboBox2.getSelectedItem(), frame);
                     warning.setVisible(false);
                     frame.setVisible(false);
                     frame.pack();
@@ -45,7 +60,7 @@ public class Demo {
                 super.mouseClicked(e);
 
                 if (areArgumentsValid()) {
-                    new Client(textField1.getText(), textField2.getText(), Integer.parseInt(textField3.getText()), textField4.getText(), frame);
+                    new Client(textField1.getText(), textField2.getText(), (int) comboBox1.getSelectedItem(), (String) comboBox2.getSelectedItem(), frame);
                     warning.setVisible(false);
                     frame.setVisible(false);
                     frame.pack();
@@ -58,13 +73,7 @@ public class Demo {
     }
 
     private boolean areArgumentsValid() {
-        if (textField1.getText().isEmpty()) return false;
-        try {
-            Integer.parseInt(textField3.getText());
-        } catch (Exception ex) {
-            return false;
-        }
-        return !textField4.getText().isEmpty();
+        return !textField1.getText().isEmpty();
     }
 
     public static void main(String[] args) {

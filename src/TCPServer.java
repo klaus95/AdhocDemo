@@ -34,6 +34,7 @@ public class TCPServer extends Thread {
         if (ss == null) { System.out.println("ServerSocket failed!"); return; }
 
         try {
+
             while (true) {
                 new TCPThread(ss.accept(), list, lock).start();
             }

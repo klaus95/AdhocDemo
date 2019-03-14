@@ -1,5 +1,4 @@
 import AdhocAPI.*;
-
 import javax.swing.*;
 
 public class CreateNetwork extends Thread {
@@ -34,13 +33,14 @@ public class CreateNetwork extends Thread {
 
             try {
                 network.createNetwork();
-                performance.setText(" WIFI \"" + WIFIname + "\" created!");
+                performance.setText(" Adhoc network created!");
                 frame.pack();
             } catch (Exception e) {
                 e.printStackTrace();
-                performance.setText(" WIFI \"" + WIFIname + "\" failed!");
+                performance.setText(" Adhoc network failed!");
                 frame.pack();
             }
+
         } catch (UnknownOSException e) {
             System.out.println("OS not supported");
         }

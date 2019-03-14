@@ -3,7 +3,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Random;
 import java.util.concurrent.Semaphore;
 
 public class Server {
@@ -15,10 +14,10 @@ public class Server {
     private JLabel Performance;
 
     public Server(String name, String password, int channel,String interfaceName, JFrame oldFrame) {
-        Information.setText("<html> Server Information: <br/>    Network SSID: " + name + "<br/>    Network Password: " + password
-                                        + "<br/>    Network Interface: " + interfaceName + "<br/>    Network Channel: " + channel + "</html>");
+        Information.setText("<html> Server Information: <br/><br/>   SSID:       " + name + "<br/>    Password:   " + password
+                                        + "<br/>    Interface:  " + interfaceName + "<br/>    Channel:    " + channel + "</html>");
 
-        Performance.setText("Creating " + name + " WIFI...");
+        Performance.setText("Creating adhoc network...");
 
         JFrame frame = new JFrame("Server");
         frame.setContentPane(this.panel1);
@@ -46,10 +45,6 @@ public class Server {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 DefaultListModel model = new DefaultListModel();
-                Random rnd = new Random();
-                for (int i = 0; i < 2 + rnd.nextInt(20); i++) {
-                    model.addElement("Element " + i);
-                }
                 list1.setModel(model);
             }
         });
@@ -68,9 +63,6 @@ public class Server {
     private void createUIComponents() {
         DefaultListModel model = new DefaultListModel();
         list1 = new JList<>();
-        for (int i = 0; i < 4; i++) {
-            model.addElement("Element " + i);
-        }
         list1.setModel(model);
     }
 }

@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.LinkedList;
 
 public class Client {
 
@@ -14,8 +13,6 @@ public class Client {
     private JLabel waitLabel;
     private JLabel warning;
     private JLabel idLabel;
-
-    static LinkedList<String> ips = new LinkedList<>();
 
     public Client (String name, String password, int channel, String interfaceName, JFrame oldFrame) {
 
