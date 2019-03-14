@@ -49,7 +49,7 @@ public class WindowsAdHocConfig extends AdHocConfig {
     }
 
     public boolean fileExists(String fileName) {
-        String path =Paths.get(".").toAbsolutePath().normalize().toString() + "\\code\\scripts\\Windows\\" + fileName;
+        String path =Paths.get(".").toAbsolutePath().normalize().toString() + "\\src\\AdhocAPI\\scripts\\Windows\\" + fileName;
         File temp = new File(path);
         return temp.exists();
     }
@@ -76,8 +76,8 @@ public class WindowsAdHocConfig extends AdHocConfig {
        }
         try {
             //**************Check that all the necessary arguments are defined***********
-            String missingArgs = getMissingArgs();
-            if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
+            //String missingArgs = getMissingArgs();
+            //if (!missingArgs.equals("")) throw new MissingArgumentsException(missingArgs);
             //****************************************************************************
            String[] script_with_args = {scriptName};
            ScriptMeta metadata = runScript(script_with_args);
@@ -95,7 +95,14 @@ public class WindowsAdHocConfig extends AdHocConfig {
                 final String line = output.nextLine();
                     try {
                         String[] words = line.split("\\s+");
-                        interfaces.add(words[3]); // return the Interface Name
+                        StringBuilder interfaceName = new StringBuilder();
+                        for (int i = 3; i < words.length; i++) {
+                            if (interfaceName.length() > 0) {
+                                interfaceName.append(" ");
+                            }
+                            interfaceName.append(words[i]);
+                        }
+                        interfaces.add(interfaceName.toString()); // return the Interface Name
                     } catch (PatternSyntaxException ex) {
                         System.out.println("Please fix the getInterfaces method in SystemConfigurationWindows.java. I'm right here in the try/catch of the while loop.");
 
