@@ -383,6 +383,14 @@ public class WindowsAdHocConfig extends AdHocConfig {
 
     @Override
     public int disconnectFromNetwork() throws ScriptFailureException {
+        try { // Set the interface back to dynamic ip
+            String new_script = "WINDOWS_SET_DYNAMIC_IP";
+            String[] new_script_name = {new_script, this.getNetworkInterface()};
+            ScriptMeta metadata2 = runScript(new_script_name);
+            metadata2.setName(new_script);
+        } catch(Exception e) {
+            throw catchSFE(e);
+        }
         try {
             // old way was to host networks, but thats in infrastructure mode
             //String[] script_name = {"WINDOWS_STOP_HOST_ADHOC.cmd"};
@@ -398,6 +406,14 @@ public class WindowsAdHocConfig extends AdHocConfig {
             //*******************************************************************************/
             if (metadata.getErrorCode() != 0) {
                 throw sendLOG(metadata);
+            }
+            try { // Set the interface back to dynamic ip
+                String new_script = "WINDOWS_SET_DYNAMIC_IP";
+                String[] new_script_name = {new_script, this.getNetworkInterface()};
+                ScriptMeta metadata2 = runScript(new_script_name);
+                metadata2.setName(new_script);
+            } catch(Exception e) {
+                throw catchSFE(e);
             }
         } catch (Exception e) {
             throw catchSFE(e);
