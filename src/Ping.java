@@ -28,7 +28,7 @@ public class Ping extends Thread {
         Callable<PingResult> callable;
         List<String> ips = new ArrayList<>();
 
-        for(int i = 2; i < numberOfIPs; i++){
+        for(int i = 1; i < numberOfIPs; i++){
             callable = new PingTask("169.254.1." + i);
             Future<PingResult> future = executor.submit(callable);
             list.add(future);
