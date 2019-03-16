@@ -189,6 +189,7 @@ public class WindowsAdHocConfig extends AdHocConfig {
 
     @Override
     public int connectToNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException, DeniedPermissionException {
+        createProfile();
         try {
             //*************Update the SystemConfiguration here**************************
             this.setSSID(networkName);
