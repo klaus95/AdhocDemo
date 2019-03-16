@@ -6,11 +6,11 @@ public class Test {
         try {
 
             AdHocConfig network = FactoryAdHocConfig.init();
-            network.createNetwork("Connect", "", "en0", 11);
-            Thread.sleep(40 * 1000);
+            network.createNetwork("Connect", "", "Wi-Fi", 11);
+            Thread.sleep(40*1000);
             network.disconnectFromNetwork();
-            network.connectToNetwork("PanthAIR", "", "en0", 11);
-
+            network.connectToNetwork("PanthAIR", "", "Wi-Fi", 11);
+            System.out.print("Success");
         } catch(Exception e) {
             System.out.println("Shit happened");
             //e.printStackTrace();

@@ -182,13 +182,13 @@ public class WindowsAdHocConfig extends AdHocConfig {
     }
 
     @Override
-    public int connectToNetwork() throws ScriptFailureException {
+    public int connectToNetwork() throws ScriptFailureException, MissingArgumentsException, ScriptMissingException, DeniedPermissionException {
         connectToNetwork(this.getSSID(), this.getPassword(), this.getNetworkInterface(), this.getChannel());
         return 0;
     }
 
     @Override
-    public int connectToNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException {
+    public int connectToNetwork(String networkName, String password, String interfaceName, int channel) throws ScriptFailureException, MissingArgumentsException, ScriptMissingException, DeniedPermissionException {
         try {
             //*************Update the SystemConfiguration here**************************
             this.setSSID(networkName);
@@ -321,23 +321,6 @@ public class WindowsAdHocConfig extends AdHocConfig {
 
     @Override
     public int createNetwork() throws ScriptFailureException, MissingArgumentsException {
-        /*try {
-             Possible password restrictions here
-            if (password_key.length() < 8) {
-                System.out.println("Password key must be between _ and _ characters");
-                return 1;
-            }
-            */
-            /*String[] script_with_args = {"WINDOWS_START_HOST_ADHOC.cmd", this.getSSID(), this.getPassword()};
-            ScriptMeta metadata = runScript(script_with_args);
-            metadata.setName("WINDOWS_START_HOST_ADHOC.cmd");
-            if (metadata.getErrorCode() != 0) {
-                throw sendLOG(metadata);
-            }
-        } catch (Exception e) {
-            throw catchSFE(e);
-        }*/
-
             createNetwork(this.getSSID(), this.getPassword(), this.getNetworkInterface(), this.getChannel());
         return 0;
     }
@@ -388,7 +371,13 @@ public class WindowsAdHocConfig extends AdHocConfig {
         // instead of connecting to the network you intended to.
         // ONLY USE CREATE_PROFILE for NEW AD-HOC Networks, hence why it's ONLY in
         // the createNetwork function
-        connectToNetwork(networkName, password, interfaceName, channel);
+        try {
+            connectToNetwork(networkName, password, interfaceName, channel);
+        } catch (ScriptMissingException e) {
+            e.printStackTrace();
+        } catch (DeniedPermissionException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 
@@ -444,7 +433,6 @@ public class WindowsAdHocConfig extends AdHocConfig {
             commands_with_arguments.add(s);
         }
         ProcessBuilder pb = new ProcessBuilder(commands_with_arguments);
-        //ProcessBuilder pb = new ProcessBuilder("cmd", "/c", command[0]);
         pb.directory(new File("src/AdhocAPI/scripts/Windows"));
         Process p = pb.start();
         return new ScriptMeta(p.waitFor(), output(p.getInputStream()));
