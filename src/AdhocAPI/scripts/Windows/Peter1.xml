@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
+<name>Peter1</name>
+<SSIDConfig>
+<SSID>
+<hex>506574657231</hex>
+<name>Peter1</name>
+</SSID>
+<nonBroadcast>false</nonBroadcast>
+</SSIDConfig>
+<connectionType>IBSS</connectionType>
+<connectionMode>manual</connectionMode>
+<MSM>
+<security>
+<authEncryption>
+<authentication>open</authentication>
+<encryption>none</encryption>
+<useOneX>false</useOneX>
+</authEncryption>
+</security>
+</MSM>
+</WLANProfile>

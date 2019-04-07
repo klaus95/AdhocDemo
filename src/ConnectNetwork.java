@@ -33,7 +33,7 @@ public class ConnectNetwork extends Thread {
             network.setSSID(WIFIname);
 
             try {
-                network.connectToNetwork();
+                network.createNetwork();
                 LabelStatus.setText(" Connected to  \"" + WIFIname + "\"!");
                 frame.pack();
             } catch (Exception e) {
