@@ -6,6 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 public abstract class AdHocConfig {
@@ -67,6 +73,34 @@ public abstract class AdHocConfig {
         ScriptFailureException hold = new ScriptFailureException(temp);
         ErrorLogging.LOGS.log(Level.SEVERE, hold.toString(), hold);
         return hold;
+    }
+
+    public static List<String> ping(String ipDomain) {
+
+        int numberOfIPs = 255;
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfIPs);
+        List<Future<PingResult>> list = new ArrayList<>();
+        Callable<PingResult> callable;
+        List<String> ips = new ArrayList<>();
+
+        for(int i = 1; i < numberOfIPs; i++){
+            callable = new PingTask(ipDomain + i);
+            Future<PingResult> future = executor.submit(callable);
+            list.add(future);
+        }
+
+        for(Future<PingResult> result : list){
+            try {
+                if (result.get().getResultCode() == 0) {
+                    ips.add(result.get().getIpAddress());
+                }
+            } catch (Exception ex) {
+                System.out.println("IP hunt failed");
+            }
+        }
+        executor.shutdown();
+
+        return ips;
     }
 
 	public void setChannel(int c) { channel = c; }
